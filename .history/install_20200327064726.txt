@@ -1,0 +1,10 @@
+pour exécuter le script il faut installer des bibliothèques :
+  - Shapely  : utiliser le fichier whl sur https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely ou whl fourni avec le script pour la x64 python 3.5 pour metashap 1.6.x
+  - pillow
+
+
+executer les commandes suivantes sans la CMS en tant que administrateur: 
+
+ -   cd "C:\Program Files\Agisoft\Metashape Pro\python"
+ -   python -m pip install pillow
+ -   python -m pip install "chemin vers\Shapely-1.6.4.post2-cp35-cp35m-win_amd64.whl"

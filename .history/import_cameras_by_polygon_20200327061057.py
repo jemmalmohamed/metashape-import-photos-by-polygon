@@ -1,4 +1,5 @@
-import time
+import sys
+import subprocess
 
 import Metashape
 from PySide2 import QtGui, QtCore, QtWidgets
@@ -27,9 +28,9 @@ class ImportCameraDlg(QtWidgets.QDialog):
     imageList = ['']
     shapeFile = Polygon
     pathPhotos = ['']
-    wgs = Metashape.CoordinateSystem("EPSG::4326")
+    self.wgs = Metashape.CoordinateSystem("EPSG::4326")
 
-    lambert = Metashape.CoordinateSystem("EPSG::26191")
+    self.lambert = Metashape.CoordinateSystem("EPSG::26191")
 
     def __init__(self, parent):
 
@@ -118,7 +119,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
         coord = get_coordinates(geotags)
 
         cameraLambert = Metashape.CoordinateSystem.transform(
-            [float(coord['lon']), float(coord['lat'])],  self.wgs,  self.lambert)
+            [float(coord['lon']), float(coord['lat'])],  wgs,  lambert)
 
         photo = Point(cameraLambert.x, cameraLambert.y)
 
@@ -126,13 +127,14 @@ class ImportCameraDlg(QtWidgets.QDialog):
             self.imageList.append(path_photo)
 
     def importCameras(self):
-        start = time.perf_counter()
+
         print("Import Cameras Script started...")
 
+
         # methode 4
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(self.checkPhotos, self.pathPhotos)
-        finish = time.perf_counter()
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        #     executor.map(self.checkPhotos, self.pathPhotos)
+
         # methode 3 plus rapide
         # with concurrent.futures.ThreadPoolExecutor() as executor:
 
@@ -154,9 +156,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
         #     thread.join()
 
         # self.checkPhotos(path_photo)
-        print('Check Photos Finished in {} seconds'.format(round(finish-start, 2)))
 
-        self.close()
         chunk = Metashape.app.document.chunk
 
         chunk.addPhotos(self.imageList)

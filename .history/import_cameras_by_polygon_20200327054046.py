@@ -1,4 +1,5 @@
-import time
+import sys
+import subprocess
 
 import Metashape
 from PySide2 import QtGui, QtCore, QtWidgets
@@ -6,7 +7,7 @@ from shapely.geometry import Point
 from shapely.geometry import Polygon
 from shapely import geometry
 import os
-import concurrent.futures
+import concurrent
 
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -27,10 +28,6 @@ class ImportCameraDlg(QtWidgets.QDialog):
     imageList = ['']
     shapeFile = Polygon
     pathPhotos = ['']
-    wgs = Metashape.CoordinateSystem("EPSG::4326")
-
-    lambert = Metashape.CoordinateSystem("EPSG::26191")
-
     def __init__(self, parent):
 
         QtWidgets.QDialog.__init__(self, parent)
@@ -112,13 +109,16 @@ class ImportCameraDlg(QtWidgets.QDialog):
         print(len(self.pathPhotos))
 
     def checkPhotos(self, path_photo):
+        wgs = Metashape.CoordinateSystem("EPSG::4326")
+
+        lambert = Metashape.CoordinateSystem("EPSG::26191")
 
         exif = get_exif(path_photo)
         geotags = get_geotagging(exif)
         coord = get_coordinates(geotags)
 
         cameraLambert = Metashape.CoordinateSystem.transform(
-            [float(coord['lon']), float(coord['lat'])],  self.wgs,  self.lambert)
+            [float(coord['lon']), float(coord['lat'])],  wgs,  lambert)
 
         photo = Point(cameraLambert.x, cameraLambert.y)
 
@@ -126,37 +126,18 @@ class ImportCameraDlg(QtWidgets.QDialog):
             self.imageList.append(path_photo)
 
     def importCameras(self):
-        start = time.perf_counter()
+
         print("Import Cameras Script started...")
+        threads = []
+        for path_photo in self.pathPhotos:
+            t = threading.Thread(target=self.checkPhotos, args=[path_photo])
+            t.start()
+            threads.append(t)
+        for thread in threads:
+            thread.join()
 
-        # methode 4
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(self.checkPhotos, self.pathPhotos)
-        finish = time.perf_counter()
-        # methode 3 plus rapide
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
+            # self.checkPhotos(path_photo)
 
-        #     [executor.submit(self.checkPhotos, path_photo)
-        #      for path_photo in self.pathPhotos]
-
-        # methode 2
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-        #     for path_photo in self.pathPhotos:
-        #         f1 = executor.submit(self.checkPhotos, path_photo)
-
-        # methode 1
-        # threads = []
-        # for path_photo in self.pathPhotos:
-        #     t = threading.Thread(target=self.checkPhotos, args=[path_photo])
-        #     t.start()
-        #     threads.append(t)
-        # for thread in threads:
-        #     thread.join()
-
-        # self.checkPhotos(path_photo)
-        print('Check Photos Finished in {} seconds'.format(round(finish-start, 2)))
-
-        self.close()
         chunk = Metashape.app.document.chunk
 
         chunk.addPhotos(self.imageList)

@@ -30,7 +30,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
     wgs = Metashape.CoordinateSystem("EPSG::4326")
 
     lambert = Metashape.CoordinateSystem("EPSG::26191")
-
+    start = time.perf_counter()
     def __init__(self, parent):
 
         QtWidgets.QDialog.__init__(self, parent)
@@ -126,13 +126,13 @@ class ImportCameraDlg(QtWidgets.QDialog):
             self.imageList.append(path_photo)
 
     def importCameras(self):
-        start = time.perf_counter()
+
         print("Import Cameras Script started...")
 
         # methode 4
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.map(self.checkPhotos, self.pathPhotos)
-        finish = time.perf_counter()
+
         # methode 3 plus rapide
         # with concurrent.futures.ThreadPoolExecutor() as executor:
 
@@ -154,9 +154,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
         #     thread.join()
 
         # self.checkPhotos(path_photo)
-        print('Check Photos Finished in {} seconds'.format(round(finish-start, 2)))
 
-        self.close()
         chunk = Metashape.app.document.chunk
 
         chunk.addPhotos(self.imageList)

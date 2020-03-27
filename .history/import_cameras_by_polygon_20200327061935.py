@@ -154,7 +154,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
         #     thread.join()
 
         # self.checkPhotos(path_photo)
-        print('Check Photos Finished in {} seconds'.format(round(finish-start, 2)))
+        print('Finished in {} seconds'.format(round(finish-start, 2)))
 
         self.close()
         chunk = Metashape.app.document.chunk
