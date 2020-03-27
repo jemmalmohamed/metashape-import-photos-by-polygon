@@ -200,9 +200,7 @@ def get_labeled_exif(exif):
 def get_exif(filename):
     image = Image.open(filename)
     image.verify()
-    exif = image._getexif()
-    image.close()
-    return exif
+    return image._getexif()
 
     print('--------------------------------')
 

@@ -108,7 +108,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
 
         print(len(self.pathPhotos))
 
-    def checkPhotos(self, path_photo):
+    def checkPhotos(path_photo):
         wgs = Metashape.CoordinateSystem("EPSG::4326")
 
         lambert = Metashape.CoordinateSystem("EPSG::26191")
@@ -200,9 +200,7 @@ def get_labeled_exif(exif):
 def get_exif(filename):
     image = Image.open(filename)
     image.verify()
-    exif = image._getexif()
-    image.close()
-    return exif
+    return image._getexif()
 
     print('--------------------------------')
 

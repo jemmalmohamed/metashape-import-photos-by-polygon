@@ -7,7 +7,6 @@ from shapely.geometry import Point
 from shapely.geometry import Polygon
 from shapely import geometry
 import os
-import threading
 
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -86,11 +85,12 @@ class ImportCameraDlg(QtWidgets.QDialog):
         poly = Polygon(shp.points)
         self.btnAdd.setEnabled(True)
         self.shapeFile = poly
-        print(self.shapeFile.wkt)
 
     def selectFolder(self):
-        self.imageList = []
-        self.pathPhotos = []
+
+        wgs = Metashape.CoordinateSystem("EPSG::4326")
+        merc = Metashape.CoordinateSystem("EPSG::3857")
+        lambert = Metashape.CoordinateSystem("EPSG::26191")
 
         chunk = Metashape.app.document.chunk
 
@@ -105,42 +105,39 @@ class ImportCameraDlg(QtWidgets.QDialog):
                 if(extension == '.jpg'):
                     path_photo = root + '/' + file
                     self.pathPhotos.append(path_photo)
+                    # exif = get_exif(path_photo)
+                    # geotags = get_geotagging(exif)
+                    # coord = get_coordinates(geotags)
+                    # cameraLambert = Metashape.CoordinateSystem.transform(
+                    #     [float(coord['lon']), float(coord['lat'])],  wgs,  lambert)
+                    # photo = Point(cameraLambert.x, cameraLambert.y)
+                    # print(photo.wkt)
+                    # if self.shapeFile.contains(photo):
+                    #     print(path_photo)
 
+                    #     self.imageList.append(path_photo)
+                    #     print(self.imageList)
+                    # else:
+                    #     print('no')
+                    #             self.IMAGELIST.append(path_photo)
+                    # for f in self.imageList:
+                    #     print(f)
         print(len(self.pathPhotos))
 
-    def checkPhotos(self, path_photo):
+    def checkPhotoInPolygon(coord, polygon):
+
         wgs = Metashape.CoordinateSystem("EPSG::4326")
-
+        merc = Metashape.CoordinateSystem("EPSG::3857")
         lambert = Metashape.CoordinateSystem("EPSG::26191")
-
-        exif = get_exif(path_photo)
-        geotags = get_geotagging(exif)
-        coord = get_coordinates(geotags)
-
-        cameraLambert = Metashape.CoordinateSystem.transform(
-            [float(coord['lon']), float(coord['lat'])],  wgs,  lambert)
-
-        photo = Point(cameraLambert.x, cameraLambert.y)
-
-        if self.shapeFile.contains(photo):
-            self.imageList.append(path_photo)
 
     def importCameras(self):
 
         print("Import Cameras Script started...")
-        threads = []
-        for path_photo in self.pathPhotos:
-            t = threading.Thread(target=self.checkPhotos, args=[path_photo])
-            t.start()
-            threads.append(t)
-        for thread in threads:
-            thread.join()
 
-            # self.checkPhotos(path_photo)
+        # chunk = Metashape.app.document.chunk
 
-        chunk = Metashape.app.document.chunk
-
-        chunk.addPhotos(self.imageList)
+        # chunk.addPhotos(self.imageList)
+        # source = chunk.shapes.crs
 
         print("Script finished!")
         return True
@@ -200,9 +197,7 @@ def get_labeled_exif(exif):
 def get_exif(filename):
     image = Image.open(filename)
     image.verify()
-    exif = image._getexif()
-    image.close()
-    return exif
+    return image._getexif()
 
     print('--------------------------------')
 

@@ -7,7 +7,7 @@ from shapely.geometry import Point
 from shapely.geometry import Polygon
 from shapely import geometry
 import os
-import threading
+from multiprocessing import Pool
 
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -89,8 +89,8 @@ class ImportCameraDlg(QtWidgets.QDialog):
         print(self.shapeFile.wkt)
 
     def selectFolder(self):
-        self.imageList = []
         self.pathPhotos = []
+        self.imageList = []
 
         chunk = Metashape.app.document.chunk
 
@@ -123,20 +123,17 @@ class ImportCameraDlg(QtWidgets.QDialog):
         photo = Point(cameraLambert.x, cameraLambert.y)
 
         if self.shapeFile.contains(photo):
-            self.imageList.append(path_photo)
+            return True
+        else:
+            return False
 
     def importCameras(self):
-
+        self.imageList = []
         print("Import Cameras Script started...")
-        threads = []
-        for path_photo in self.pathPhotos:
-            t = threading.Thread(target=self.checkPhotos, args=[path_photo])
-            t.start()
-            threads.append(t)
-        for thread in threads:
-            thread.join()
 
-            # self.checkPhotos(path_photo)
+        for path_photo in self.pathPhotos:
+            if self.checkPhotos(path_photo) == True:
+                self.imageList.append(path_photo)
 
         chunk = Metashape.app.document.chunk
 
@@ -200,9 +197,7 @@ def get_labeled_exif(exif):
 def get_exif(filename):
     image = Image.open(filename)
     image.verify()
-    exif = image._getexif()
-    image.close()
-    return exif
+    return image._getexif()
 
     print('--------------------------------')
 

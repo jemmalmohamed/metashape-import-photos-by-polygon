@@ -108,7 +108,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
 
         print(len(self.pathPhotos))
 
-    def checkPhotos(self, path_photo):
+    def checkPhotos(path_photo):
         wgs = Metashape.CoordinateSystem("EPSG::4326")
 
         lambert = Metashape.CoordinateSystem("EPSG::26191")
@@ -130,7 +130,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
         print("Import Cameras Script started...")
         threads = []
         for path_photo in self.pathPhotos:
-            t = threading.Thread(target=self.checkPhotos, args=[path_photo])
+            t = threading.Thread(target=self.pathPhotos, args=[path_photo])
             t.start()
             threads.append(t)
         for thread in threads:
@@ -200,9 +200,7 @@ def get_labeled_exif(exif):
 def get_exif(filename):
     image = Image.open(filename)
     image.verify()
-    exif = image._getexif()
-    image.close()
-    return exif
+    return image._getexif()
 
     print('--------------------------------')
 
