@@ -1,6 +1,7 @@
 # Python script for Metashape pro
 
-This scrpt are supported to be used in Metashape Pro v1.6.x
+This script are supported to be used in Metashape Pro v1.6.x
+# Functionality
 
 Automatically load photos by choosen polygon 
 
@@ -8,23 +9,30 @@ Automatically load photos by choosen polygon
 
 # Technologies
 - python 3.5
-# Requirements 
+# Installation & Requirements 
 
-in python folder in metashape install folder install modules :
+in python folder in metashape install folder 
+
+install modules by CMD as administrator:
+
+```bash
+cd "C:\Program Files\Agisoft\Metashape Pro\python"
+```
+
 ```bash
 python -m pip install pillow
 ```
-pour exécuter le script il faut installer des bibliothèques tiers:
-  - Shapely  : utiliser le fichier whl téléchargeable sur https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely ou whl fourni avec le script pour la x64 python 3.5 / metashape 1.6.x
-  - pillow
-  - pyshp
 
-Dans la CMD en tant que administrateur: 
+```bash
+python -m pip install pyshp
+```
 
- -   cd "C:\Program Files\Agisoft\Metashape Pro\python"
- -   python -m pip install pillow
- -   python -m pip install pyshp
- -   python -m pip install "chemin vers\Shapely-1.6.4.post2-cp35-cp35m-win_amd64.whl"
+install compatible shapely verion to your system whl https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely
+For version Metashape 1.6.x & windows x64 use version Shapely-1.6.4.post2-cp35-cp35m-win_amd64.whl
+
+```bash
+python -m pip install "path to\Shapely-1.6.4.post2-cp35-cp35m-win_amd64.whl"
+```
 
 #utilisation
 
