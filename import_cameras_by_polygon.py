@@ -27,6 +27,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
     imageList = ['']
     shapeFile = Polygon
     pathPhotos = ['']
+    subFolders = ['']
     wgs = Metashape.CoordinateSystem("EPSG::4326")
 
     lambert = Metashape.CoordinateSystem("EPSG::26191")
