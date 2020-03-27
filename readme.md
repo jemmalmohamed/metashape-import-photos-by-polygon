@@ -1,9 +1,10 @@
+# Metashape Script : import photos by polygon (SHP)
+
+# installation : 
 pour exécuter le script il faut installer des bibliothèques tiers:
   - Shapely  : utiliser le fichier whl téléchargeable sur https://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely ou whl fourni avec le script pour la x64 python 3.5 / metashape 1.6.x
   - pillow
   - pyshp
-
-# installation : 
 
 Dans la CMD en tant que administrateur: 
 
