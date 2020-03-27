@@ -1,12 +1,12 @@
-import time
-
 import Metashape
 from PySide2 import QtGui, QtCore, QtWidgets
+import concurrent.futures
+import time
+import os
+
 from shapely.geometry import Point
 from shapely.geometry import Polygon
 from shapely import geometry
-import os
-import concurrent.futures
 
 from PIL import Image
 from PIL.ExifTags import TAGS
