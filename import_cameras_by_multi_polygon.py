@@ -131,7 +131,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
             [float(coord['lon']), float(coord['lat'])],  self.wgs,  self.lambert)
 
         photo = Point(cameraLambert.x, cameraLambert.y)
-        print(photo)
+        
         if self.shapeFile.contains(photo):
             self.imageList.append(path_photo)
 
@@ -149,7 +149,7 @@ class ImportCameraDlg(QtWidgets.QDialog):
             shapes = shapefile.Reader(shp).shapes()
             shp = shapes[0]
             poly = Polygon(shp.points)
-            print(poly)
+             
             self.shapeFile = poly
         
         # methode 4
@@ -158,11 +158,13 @@ class ImportCameraDlg(QtWidgets.QDialog):
             finish = time.perf_counter()
     
             print('Check Photos Finished in {} seconds'.format(round(finish-start, 2)))
-
-            new_chunk = doc.addChunk()
             
-            new_chunk.label = 'chunk ' + str(i)
-            chunk.addPhotos(self.imageList)
+            base = os.path.basename(self.shapesFile[0][i])
+            name = os.path.splitext(base)[0]  
+            print(name)
+            new_chunk = doc.addChunk()
+            new_chunk.label =  str(name)
+            new_chunk.addPhotos(self.imageList)
 
         print("Script finished!")
         return True
